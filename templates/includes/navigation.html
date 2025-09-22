@@ -1,0 +1,124 @@
+
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <!-- Search form -->
+      
+      <!-- Navbar links -->
+      <ul class="navbar-nav align-items-center  ml-md-auto ">
+        <li class="nav-item d-xl-none">
+          <!-- Sidenav toggler -->
+          <div class="pr-3 sidenav-toggler sidenav-toggler-dark" data-action="sidenav-pin" data-target="#sidenav-main">
+            <div class="sidenav-toggler-inner">
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+              <i class="sidenav-toggler-line"></i>
+            </div>
+          </div>
+        </li>
+        <li class="nav-item d-sm-none">
+          <a class="nav-link" href="#" data-action="search-show" data-target="#navbar-search-main">
+            <i class="ni ni-zoom-split-in"></i>
+          </a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            {% if current_user.role == 'Caregiver' %}
+            <i class="ni ni-bell-55"></i>
+            {% endif %}
+
+          </a>
+          <div class="dropdown-menu dropdown-menu-xl  dropdown-menu-right  py-0 overflow-hidden">
+            <!-- Dropdown header -->
+            <div class="px-3 py-3">
+              
+            </div>
+            <!-- List group --> 
+
+           
+            
+            <div class="px-3 py-3">
+              
+            </div>
+            {% if current_user.role == 'Caregiver' %}
+            {% block content %}
+            
+      <h2>Your Scheduled Sessions</h2>
+
+        {% if schedules %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Family Member</th>
+                    <th>Start Time</th>
+                    <th>End Time</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% for schedule in schedules %}
+              {% if not schedule.payments or not schedule.payments|selectattr("status", "equalto", "approved")|list %}
+
+              {# Exclude paid schedules #}
+                      <tr>
+                          <td><i class="bi bi-person-fill"></i> {{ schedule.family_user.username }}</td>
+                          <td><i class="bi bi-clock-fill"></i> {{ schedule.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                          <td><i class="bi bi-clock-fill"></i> {{ schedule.end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                          <td><i class="bi bi-clock-fill"></i> {{ schedule.status }}</td>
+                          <td>
+                              <span class="status-badge 
+                                  {% if schedule.status == 'scheduled' %} status-scheduled
+                                  {% elif schedule.status == 'accepted' %} status-accepted
+                                  {% elif schedule.status == 'rejected' %} status-rejected {% endif %}">
+                                  {{ schedule.status|capitalize }}
+                              </span>
+                            </td>
+            
+                      </tr>
+                  {% endif %}
+              {% endfor %}
+          </tbody>
+        </table>
+    {% else %}
+        <p>You have no caregiving sessions scheduled.</p>
+    {% endif %}
+    
+    
+            <!-- View all -->
+            <a href="#!" class="dropdown-item text-center text-primary font-weight-bold py-3">View all</a>
+          </div>
+          {% endblock %}
+    {% endif %}
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="ni ni-ungroup"></i>
+          </a>
+          <div class="dropdown-menu dropdown-menu-lg dropdown-menu-dark bg-default  dropdown-menu-right ">
+            <div class="row shortcuts px-4">
+              {% if current_user.role == 'Family' %}
+              <a href="{{ url_for('view_pending_payouts') }}" class="col-4 shortcut-item">
+                <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                  <i class="ni ni-credit-card"></i>
+                </span>
+                <small>Payments</small>
+              </a> 
+              {% elif current_user.role == 'Caregiver' %}
+              <a href="{{ url_for('view_earnings') }}" class="col-4 shortcut-item">
+                <span class="shortcut-media avatar rounded-circle bg-gradient-info">
+                  <i class="ni ni-credit-card"></i>
+                </span>
+                <small>earnings</small>
+              </a> 
+              {% endif %}
+            </div>
+          </div>
+        </li>
+      
+      </ul>
+      <ul class="navbar-nav align-items-center  ml-auto ml-md-0 ">
+        
+      </ul>
+    </div>
+  </div>
+</nav>

@@ -1,0 +1,350 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Family Home {% endblock title %}
+
+{% block stylesheets %}
+<style>
+    /* Background Styling */
+    body {
+        background-image: url("/static/images/cgbg.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: white;
+    }
+
+    /* Main Content Wrapper */
+    .content-wrapper {
+        background: rgba(0, 0, 0, 0.6);
+        padding: 30px;
+        border-radius: 15px;
+        color: white;
+    }
+
+    /* Header Section */
+    .header {
+        text-align: center;
+        padding: 50px 0;
+        border-radius: 15px;
+        color: aliceblue;
+    }
+
+    /* Card Styles */
+    .card-custom {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        background: rgba(255, 255, 255, 0.9);
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        color: #333;
+    }
+
+    .card-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .card-title {
+        font-size: 20px;
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    /* Chatbot Styling */
+    .chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 350px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        background: #007bff;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .chat-body {
+        padding: 15px;
+        height: 300px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-footer {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    .chat-footer input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .chat-footer button {
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        margin-left: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .chat-message {
+        background: #f1f1f1;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        max-width: 80%;
+    }
+
+    .chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007bff;
+        color: white;
+        padding: 15px;
+        border-radius: 50%;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+    }
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<!-- Header -->
+<div class="container-fluid mt-4 content-wrapper">
+    <div class="header">
+        <h2 style="color: aliceblue;">Welcome, {{ family.username }}!</h2>
+        <p>Providing the best care for your loved ones with SilverSupport.</p>
+    </div>
+    <div class="row">
+        <!-- About Us -->
+        <div class="col-lg-6">
+            <div class="card card-custom">
+                <h5 class="card-title">📌 About Us</h5>
+                <p>
+                    SilverSupport was founded with the mission to provide families with a reliable and easy-to-use platform to find the best caregivers for their elderly loved ones. 
+                    Our team is dedicated to ensuring that every caregiver on our platform is thoroughly vetted and meets our high standards of care.
+                </p>
+            </div>
+        </div>
+
+        <!-- Our Services -->
+        <div class="col-lg-6">
+            <div class="card card-custom">
+                <h5 class="card-title">🛠️ Our Services</h5>
+                <ul>
+                    <li><strong>🔍 Skill-Based Search:</strong> Find caregivers with the right skills and experience for your needs.</li>
+                    <li><strong>📅 Easy Scheduling:</strong> Book caregivers based on their availability and your schedule.</li>
+                    <li><strong>✅ Verified Caregivers:</strong> All caregivers are verified and approved by our team.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Chatbot -->
+<div class="chatbot-container" id="chatbot">
+    <div class="chat-header">
+        <strong>🩺 Health Assistant</strong>
+        <span style="float: right; cursor: pointer;" onclick="toggleChatbot()">✖</span>
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="chat-message bot-message">Hello! I'm your Health Assistant. How can I help you today? 😊</div>
+    </div>
+    <div class="chat-footer">
+        <input type="text" id="chat-input" placeholder="Ask me about health & caregiving..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<!-- Chatbot Toggle Button -->
+<div class="chatbot-button" id="chatbot-button" onclick="toggleChatbot()">💬 Chat</div>
+
+<style>
+    /* Chatbot Styling */
+    .chatbot-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 320px;
+        background: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        display: none;
+        flex-direction: column;
+        font-family: Arial, sans-serif;
+    }
+    .chat-header {
+        background: #007bff;
+        color: white;
+        padding: 10px;
+        border-radius: 10px 10px 0 0;
+        font-weight: bold;
+    }
+    .chat-body {
+        max-height: 300px;
+        overflow-y: auto;
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+    }
+    .chat-footer {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+    .chat-footer input {
+        flex: 1;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .chat-footer button {
+        margin-left: 5px;
+        background: #007bff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .chat-message {
+        max-width: 80%;
+        padding: 8px;
+        border-radius: 8px;
+        margin-bottom: 5px;
+    }
+    .bot-message {
+        align-self: flex-start;
+        background: #f1f1f1;
+        color: #333;
+    }
+    .user-message {
+        align-self: flex-end;
+        background: #007bff;
+        color: white;
+    }
+    .chatbot-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007bff;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+</style>
+
+<script>
+   function toggleChatbot() {
+    const chatbot = document.getElementById("chatbot");
+    const button = document.getElementById("chatbot-button");
+    chatbot.style.display = chatbot.style.display === "none" || chatbot.style.display === "" ? "flex" : "none";
+    button.innerHTML = chatbot.style.display === "flex" ? "✖ Close" : "💬 Chat";
+}
+
+function handleKeyPress(event) {
+    if (event.key === "Enter") sendMessage();
+}
+
+function sendMessage() {
+    const inputField = document.getElementById("chat-input");
+    const userMessage = inputField.value.trim().toLowerCase();
+    if (!userMessage) return;
+    
+    addChatMessage(userMessage, "user-message");
+    setTimeout(() => addChatMessage(getBotResponse(userMessage), "bot-message"), 1000);
+    inputField.value = "";
+}
+
+function addChatMessage(message, className) {
+    const chatBody = document.getElementById("chat-body");
+    const messageElement = document.createElement("div");
+    messageElement.className = "chat-message " + className;
+    messageElement.innerText = message;
+    chatBody.appendChild(messageElement);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function getBotResponse(message) {
+    const rules = [
+        // General Information
+        { pattern: /match|matching|connect/i, response: "The platform matches you with caregivers based on your preferences, availability, and needs." },
+        { pattern: /services|what can caregivers do/i, response: "Caregivers provide personal care, companionship, light housekeeping, and more depending on qualifications." },
+        { pattern: /create.*account|sign.*up/i, response: "Click 'Sign Up', choose 'Family', and fill in your details to create an account." },
+        { pattern: /available.*area|available.*region/i, response: "Availability depends on caregiver registrations in your region. You can check during signup." },
+
+        // Finding a Caregiver
+        { pattern: /search.*caregiver/i, response: "Use the search feature to filter caregivers by location, availability, skills, and more." },
+        { pattern: /filter.*experience|filter.*availability/i, response: "Yes, you can filter by experience, skills, and availability using advanced filters." },
+        { pattern: /view.*profile/i, response: "Click on any caregiver's name or profile link to view their details." },
+        { pattern: /profile.*information/i, response: "Profiles include experience, skills, certifications, availability, languages spoken, and reviews." },
+
+        // Costs and Payments
+        { pattern: /cost|fee|price|charges/i, response: "Caregiver rates are shown on their profile, and there are no hidden fees." },
+        { pattern: /how.*pay|payment.*method/i, response: "Payments are done through the platform using debit/credit cards or digital wallets." },
+        { pattern: /subscription/i, response: "No subscription fee. You only pay for booked caregiver sessions." },
+
+        // Scheduling and Availability
+        { pattern: /availability|calendar/i, response: "Each caregiver profile shows their availability calendar for easy booking." },
+        { pattern: /schedule.*day|book.*time/i, response: "Yes, you can book caregivers for specific days and times using their profile calendar." },
+        { pattern: /caregiver.*cancel/i, response: "If a caregiver cancels, you'll be notified and can select another caregiver quickly." },
+
+        // Communication
+        { pattern: /contact.*caregiver|message.*caregiver/i, response: "Use the in-platform messaging system to contact caregivers." },
+        { pattern: /interview/i, response: "Yes, you can request an interview time through the caregiver's profile." },
+
+        // Safety and Trust
+        { pattern: /background.*check/i, response: "All caregivers are background-checked during registration." },
+        { pattern: /safety|trust/i, response: "We ensure safety through background checks, user reviews, and admin monitoring." },
+        { pattern: /complaint|report/i, response: "Use the 'Report' button on the caregiver's profile or contact support." },
+
+        // Emergency Situations
+        { pattern: /emergency/i, response: "Caregivers are trained to respond to emergencies and can contact emergency services if needed." },
+        { pattern: /24\/?7.*support|always available/i, response: "Yes, our support team is available 24/7 via chat or email." },
+
+        // Reviews and Feedback
+        { pattern: /reviews|ratings/i, response: "You can see caregiver reviews and ratings on their profiles." },
+        { pattern: /leave.*feedback/i, response: "After a session, you can leave feedback directly on the caregiver's profile." },
+        { pattern: /not.*satisfied/i, response: "You can switch caregivers anytime and leave a review if you're not satisfied." },
+
+        // Scenario-Based
+        { pattern: /short[- ]?term|one[- ]?time/i, response: "Yes, you can book caregivers for short-term or one-time services." },
+        { pattern: /special.*medical/i, response: "You can filter for caregivers with medical certifications or relevant experience." },
+        { pattern: /language/i, response: "Use the language filter in search to find caregivers who speak specific languages." }
+    ];
+
+    for (let rule of rules) {
+        if (rule.pattern.test(message)) return rule.response;
+    }
+
+    return "I'm not sure about that. Can you rephrase or ask something related to caregivers or family support?";
+}
+
+
+document.getElementById("chatbot").style.display = "none";
+
+    // Hide chatbot initially
+    document.getElementById("chatbot").style.display = "none";
+</script>
+
+{% endblock content %}

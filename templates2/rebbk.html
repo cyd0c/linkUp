@@ -1,0 +1,98 @@
+{% extends "layouts/base.html" %}
+
+{% block title %}Caregiver Profile{% endblock title %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2 class="text-center">Caregiver Profile</h2>
+
+        {% if caregiver %}
+        <div class="card shadow-lg mb-4 p-4">
+            <div class="row">
+                <div class="col-md-4 text-center">
+                    {% if caregiver.profile_picture %}
+                        <img src="{{ url_for('static', filename=caregiver.profile_picture) }}" alt="Profile Picture"
+                             class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/default-profile.png') }}" alt="Profile Picture"
+                             class="img-fluid rounded-circle" style="width: 150px; height: 150px;">
+                    {% endif %}
+                </div>
+                <div class="col-md-8">
+                    <h3>{{ caregiver.username or 'N/A' }}</h3>
+                    <p><strong>Phone:</strong> {{ caregiver.phone or 'N/A' }}</p>
+                    <p><strong>Location:</strong> {{ caregiver.location or 'N/A' }}</p>
+                    <p><strong>Experience:</strong> {{ caregiver.experience or 'N/A' }} years</p>
+                    <p><strong>Hourly Rate:</strong> ${{ caregiver.hourly_rate or 'N/A' }}/hr</p>
+                    <p><strong>Skills:</strong> {{ caregiver.specialized_skills or 'N/A' }}</p>
+                    <button class="btn btn-info" onclick="toggleSection('reviewsSection')">Show/Hide Reviews</button>
+                    <button class="btn btn-success" onclick="toggleSection('reviewForm')">Leave a Review</button>
+                    <button class="btn btn-warning">
+                        <a class="nav-link text-dark" href="{{ url_for('schedule_session') }}">
+                            <i class="ni ni-key-25 text-info"></i>
+                            <span class="nav-link-text">Schedules</span>
+                        </a>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews Section -->
+        <div id="reviewsSection" class="card shadow-sm mb-4" style="display: none;">
+            <div class="card-header bg-info text-white">
+                <h4>Reviews</h4>
+            </div>
+            <div class="card-body">
+                {% if reviews %}
+                    <ul class="list-group">
+                        {% for review in reviews %}
+                            <li class="list-group-item">
+                                <strong>Rating:</strong> {{ review.rating }} ⭐<br>
+                                <strong>Review:</strong> {{ review.review_text }}
+                            </li>
+
+                        {% endfor %}
+                    </ul>
+                    <p class="mt-3"><strong>Average Rating:</strong> {{ avg_rating | round(2) }} / 5</p>
+                {% else %}
+                    <p>No reviews yet.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Review Submission Form -->
+        <div id="reviewForm" class="card shadow-sm mb-4" style="display: none;">
+            <div class="card-header bg-success text-white">
+                <h4>Leave a Review</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('submit_review', caregiver_id=caregiver.id) }}">
+                    <div class="mb-3">
+                        <label class="form-label">Rating (1-5):</label>
+                        <input type="number" name="rating" class="form-control" min="1" max="5" required>
+                        
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Review:</label>
+                        <textarea name="review_text" class="form-control" rows="4"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Submit Review</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+            <p class="text-center text-danger">Caregiver not found.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            var section = document.getElementById(sectionId);
+            if (section.style.display === "none" || section.style.display === "") {
+                section.style.display = "block";
+            } else {
+                section.style.display = "none";
+            }
+        }
+    </script>
+{% endblock %}

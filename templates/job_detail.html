@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card p-4 shadow-sm">
+        <h2 class="card-title text-primary">{{ job.title }}</h2>
+        <p class="card-text">{{ job.description }}</p>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <span class="badge bg-success p-2">Budget: ${{ job.budget }}</span>
+            </div>
+            <div class="col-md-6 text-md-end mt-2 mt-md-0">
+                <span class="badge bg-info p-2">{{ job.status }}</span>
+            </div>
+        </div>
+    </div>
+
+    {% if current_user.role == "Student" %}
+    <div class="card p-4 mt-4 shadow-sm">
+        <h3 class="card-title text-secondary">Apply for this Job</h3>
+        <form method="post">
+            <div class="mb-3">
+                <textarea class="form-control" name="cover_letter" placeholder="Your cover letter" rows="5"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <div class="card p-4 mt-4 shadow-sm">
+        <h3 class="card-title text-secondary">Applications</h3>
+        <ul class="list-group list-group-flush">
+            {% for app in applications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <div>
+                    <strong>{{ app.student.username }}</strong>
+                    <span class="badge bg-secondary ms-2">{{ app.status }}</span>
+                </div>
+                <div>
+                    <a class="btn btn-sm btn-info" href="{{ url_for('student.portfolio', student_id=app.student.id) }}">View Portfolio</a>
+                    {% if current_user.role == "Client" and job.client_id == current_user.id and job.status == "open" %}
+                    <form method="post" action="{{ url_for('client.assign_application', app_id=app.id) }}" class="d-inline ms-2">
+                        <button type="submit" class="btn btn-sm btn-success">Accept</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </li>
+            {% else %}
+            <li class="list-group-item">No applications yet</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

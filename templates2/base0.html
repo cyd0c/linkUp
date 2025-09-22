@@ -1,0 +1,20 @@
+<!doctype html>
+<html>
+  <head><title>{% block title %}STS{% endblock %}</title></head>
+  <body>
+    <nav>
+      {% if current_user.is_authenticated %}
+        Hello {{ current_user.username }} |
+        <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a> |
+        <a href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </nav>
+    <main>{% with messages = get_flashed_messages(with_categories=true) %}
+      {% for cat,msg in messages %}<div class="{{cat}}">{{msg}}</div>{% endfor %}
+    {% endwith %}
+    {% block content %}{% endblock %}</main>
+  </body>
+</html>

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Available Jobs</h2>
+<ul class="list-group">
+  {% for job in jobs %}
+    <li class="list-group-item">
+      <b>{{ job.title }}</b> – ${{ job.budget }}
+      <a class="btn btn-sm btn-primary float-end" href="{{ url_for('student.job_detail', job_id=job.id) }}">Apply</a>
+    </li>
+  {% else %}
+    <li class="list-group-item">No jobs available.</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('student.portfolio', student_id=student.id) }}" class="btn btn-outline-primary mt-3">
+  View Portfolio
+</a>
+
+<h2 class="mt-4">Your Projects</h2>
+<ul class="list-group">
+  {% for p in projects %}
+    <li class="list-group-item">
+      <b>{{ p.job.title }}</b> – <span class="badge bg-info">{{ p.status }}</span>
+      <a class="btn btn-sm btn-warning float-end ms-2" href="{{ url_for('student.update_project', project_id=p.id) }}">Update</a>
+      <a class="btn btn-sm btn-secondary float-end" href="{{ url_for('message.project_messages', project_id=p.id) }}">Messages</a>
+    </li>
+  {% else %}
+    <li class="list-group-item">No projects yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,348 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Home - Caregiver Dashboard {% endblock title %}
+
+<!-- Specific CSS -->
+{% block stylesheets %}
+<style>
+    /* Background */
+body {
+    background: linear-gradient(to bottom, #87a3b8, #2f4858);
+    color: white;
+}
+
+/* Card Styling */
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    color: white;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* List Group */
+.list-group-item {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    color: white;
+}
+
+.list-group-item strong {
+    color: #d9e2ec;
+}
+
+/* Buttons */
+.btn-success {
+    background-color: #0a3d62;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #0a2f4e;
+    transform: scale(1.05);
+}
+
+/* Alerts */
+.alert-info {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+    .card-custom {
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .card-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .table th, .table td {
+        vertical-align: middle;
+    }
+
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .status-accepted {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .status-paid {
+        background-color: #ffc107;
+        color: black;
+    }
+
+    .pay-now-btn {
+        background-color: #007bff;
+        color: white;
+        border-radius: 20px;
+        padding: 5px 10px;
+        font-size: 14px;
+        border: none;
+        transition: 0.3s;
+    }
+
+    .pay-now-btn:hover {
+        background-color: #0056b3;
+    }
+
+    .payment-methods {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.payment-method {
+    padding: 15px 25px;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid transparent;
+}
+
+.payment-method[data-method="card"] {
+    background-color: #1e3a8a;
+    color: white;
+}
+
+.payment-method[data-method="upi"] {
+    background-color: #047857;
+    color: white;
+}
+
+.payment-method:hover {
+    transform: scale(1.05);
+    opacity: 0.9;
+}
+
+.payment-method.active {
+    border: 3px solid white;
+    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.3);
+}
+
+    
+</style>
+
+{% endblock stylesheets %}
+
+
+{% block content %}
+
+<!-- Header -->
+<h2 class="text-center my-4">💰 Pending Payout Requests</h2>
+
+<div class="container">
+    {% if payouts %}
+        <div class="card shadow-lg p-3 bg-white rounded">
+            <ul class="list-group">
+                {% for payout in payouts %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong style="color: #0a2f4e;">👤 Caregiver: {{ payout.caregiver.username }}</strong><br>
+                            <strong style="color: #0a2f4e;">💵 Amount: ${{ payout.amount }}</strong><br>
+                            <strong style="color: #0a2f4e;">📅 Requested On: {{ payout.timestamp.strftime('%Y-%m-%d') }}</strong>
+                        </div>
+                        
+                        <button class="btn btn-success btn-sm" onclick="openOtpModal({{ payout.id }})">
+                            ✅ Approve & Pay
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <p>No pending payout requests.</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- OTP Modal -->
+<!-- Updated OTP Modal -->
+<!-- Updated OTP Modal with Payment Details -->
+<div class="modal fade" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="otpModalLabel">Verify Email & Enter OTP</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Full Name</label>
+                    <input type="text" class="form-control" id="name" placeholder="Enter your full name">
+                </div>
+
+                <label class="form-label">Choose Payment Method</label>
+               
+                <div class="payment-methods">
+                    <div class="payment-method active" data-method="card" onclick="selectMethod('card')">💳 Card</div>
+                    <div class="payment-method" data-method="upi" onclick="selectMethod('upi')">📱 UPI</div>
+                </div>
+                
+
+                <div id="paymentDetails">
+                    <!-- Card Details (Initially Visible) -->
+                    <div id="cardDetails">
+                        <div class="mb-3">
+                            <label for="cardNumber" class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="cardNumber" placeholder="**** **** **** ****">
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="expiryDate" class="form-label">Expiry Date</label>
+                                <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY">
+                            </div>
+                            <div class="col">
+                                <label for="cvv" class="form-label">CVV</label>
+                                <input type="text" class="form-control" id="cvv" placeholder="***">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="billingAddress" class="form-label">Billing Address</label>
+                            <input type="text" class="form-control" id="billingAddress" placeholder="Enter billing address">
+                        </div>
+                    </div>
+
+                    <!-- UPI Details (Initially Hidden) -->
+                    <div id="upiDetails" style="display: none;">
+                        <div class="mb-3">
+                            <label for="upiId" class="form-label">UPI ID</label>
+                            <input type="text" class="form-control" id="upiId" placeholder="example@upi">
+                        </div>
+                    </div>
+                </div>
+
+                <input type="hidden" id="payout_id">
+                <p>Enter your email to receive the OTP:</p>
+                <input type="email" id="email" class="form-control" placeholder="Enter Email">
+                <button class="btn btn-primary w-100 mt-2" onclick="sendOtp()">Send OTP</button>
+                <div id="emailError" class="text-danger text-center mt-2"></div>
+
+                <p class="mt-3">Enter the OTP sent to your email:</p>
+                <input type="text" id="otp" class="form-control" placeholder="Enter OTP">
+                <button class="btn btn-success w-100 mt-2" onclick="submitOtp()">Verify & Approve</button>
+                <div id="otpError" class="text-danger text-center mt-2"></div>
+
+                <div class="payment-footer text-center mt-3">
+                    <small>Secured by Razorpay | © 2025</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+<!-- JavaScript -->
+
+
+{% endblock content %}
+
+<!-- Specific JS -->
+{% block javascripts %}
+<script>
+function selectMethod(method) {
+    document.querySelectorAll('.payment-method').forEach(el => {
+        el.classList.remove('active');
+    });
+
+    let selected = document.querySelector(`.payment-method[data-method="${method}"]`);
+    selected.classList.add('active');
+
+    if (method === 'card') {
+        document.getElementById('cardDetails').style.display = 'block';
+        document.getElementById('upiDetails').style.display = 'none';
+    } else {
+        document.getElementById('cardDetails').style.display = 'none';
+        document.getElementById('upiDetails').style.display = 'block';
+    }
+}
+
+</script>
+
+
+<script>
+    function openOtpModal(payoutId) {
+    document.getElementById("payout_id").value = payoutId;  // ✅ Set payout ID in hidden input
+    $("#otpModal").modal("show");  // ✅ Open the modal
+}
+
+ function sendOtp() {
+    let email = document.getElementById("email").value;
+
+    fetch("/send_otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("OTP sent to your email.");
+        } else {
+            document.getElementById("emailError").innerText = data.message;
+        }
+    });
+}
+
+function submitOtp() {
+    let payoutId = document.getElementById("payout_id").value;
+    let email = document.getElementById("email").value;
+    let otp = document.getElementById("otp").value;
+
+    fetch(`/verify_otp/${payoutId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, otp: otp })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            alert("Payout approved!");
+            location.reload();
+        } else {
+            document.getElementById("otpError").innerText = data.message;
+        }
+    });
+}
+
+
+</script>
+<script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+{% endblock javascripts %}

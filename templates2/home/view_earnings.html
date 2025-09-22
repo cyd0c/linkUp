@@ -1,0 +1,112 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Your Earnings {% endblock title %}
+
+{% block stylesheets %}
+<style>
+/* Background Gradient */
+body {
+    background: linear-gradient(to bottom, #87a3b8, #2f4858);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Earnings Container - Glassmorphism */
+.earnings-container {
+    max-width: 600px;
+    margin: auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+/* Earnings List */
+.earnings-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.earnings-item {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    color: white;
+}
+
+/* Total Earnings */
+.total-earnings {
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 15px;
+    padding: 12px;
+    background: rgba(40, 167, 69, 0.9);
+    color: white;
+    border-radius: 10px;
+}
+
+/* Status Badges */
+.bg-success {
+    background-color: #28a745 !important;
+    padding: 7px 15px;
+    border-radius: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.bg-warning {
+    background-color: #ffc107 !important;
+    padding: 7px 15px;
+    border-radius: 15px;
+    color: black;
+    font-weight: bold;
+}
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<div class="earnings-container">
+    <h2 class="text-center">Your Earnings</h2>
+
+    <ul class="earnings-list">
+        {% for earning in earnings %}
+            
+            <li class="earnings-item">
+                <span><strong>${{ earning.amount }}</strong> - Paid by: {{ earning.family.username }}</span>
+                <span class="badge {% if earning.status == 'Paid' %}bg-success{% else %}bg-warning{% endif %}">
+                    {{ earning.status }}
+                </span>
+            </li>
+        {% endfor %}
+    </ul>
+    <div class="total-earnings">
+      Total Earnings: ${{ total_earnings }}
+  </div>
+  
+
+  
+</div>
+
+
+{% endblock content %}

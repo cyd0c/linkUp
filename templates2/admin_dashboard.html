@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Admin Dashboard</h2>
+    <h4>Pending Caregivers</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for caregiver in pending_caregivers %}
+            <tr>
+                <td>{{ caregiver.username }}</td>
+                <td>{{ caregiver.status }}</td>
+                <td>
+                    <a href="{{ url_for('approve_caregiver', user_id=caregiver.id) }}" class="btn btn-success">Approve</a>
+                    <a href="{{ url_for('reject_caregiver', user_id=caregiver.id) }}" class="btn btn-danger">Reject</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('view_users') }}" class="btn btn-primary">View All Users</a>
+
+    <h4>Approved Caregivers</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Username</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for caregiver in approved_caregivers %}
+            <tr>
+                <td>{{ caregiver.username }}</td>
+                <td>{{ caregiver.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

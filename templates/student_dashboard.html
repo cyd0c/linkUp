@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="mb-4">Student Dashboard</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    <h4>Available Jobs</h4>
+    <ul class="list-group">
+      {% for job in jobs %}
+        <li class="list-group-item">
+          <strong>{{ job.title }}</strong> – ${{ job.budget }}
+          <br><small>Posted by {{ job.client.username }}</small>
+          <a href="{{ url_for('job_detail', job_id=job.id) }}" class="btn btn-sm btn-primary float-end">View</a>
+        </li>
+      {% else %}
+        <li class="list-group-item">No jobs yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+
+  <div class="col-md-6">
+    <h4>Your Projects</h4>
+    
+    <ul class="list-group">
+      {% for p in projects %}
+        <li class="list-group-item">
+          <strong>{{ p.job.title }}</strong> – {{ p.status }}
+          {% if p.status in ['in_progress', 'submitted'] %}
+            <a href="{{ url_for('update_project', project_id=p.id) }}" class="btn btn-sm btn-warning float-end">Update</a>
+          {% endif %}
+          <a href="{{ url_for('project_messages', project_id=p.id) }}" class="btn btn-sm btn-info float-end me-2">Messages</a>
+        </li>
+      {% else %}
+        <li class="list-group-item">No projects yet.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}

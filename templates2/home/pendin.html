@@ -1,0 +1,7 @@
+{% if schedule.status == "accepted" %}
+<form action="{{ url_for('make_payment', schedule_id=schedule.id) }}" method="POST">
+    <button type="submit" class="pay-now-btn"><i class="bi bi-credit-card"></i> Pay Now</button>
+</form>
+{% elif schedule.status == "paid" %}
+<span><i class="bi bi-check-circle text-success"></i> Paid</span>
+{% endif %}

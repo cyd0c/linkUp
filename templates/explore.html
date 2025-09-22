@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>📰 Explore – Tech News</h2>
+  {% for news in tech_news %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <h5>{{ news.title }}</h5>
+        <p>{{ news.content }}</p>
+        <small class="text-muted">Published on {{ news.date }}</small>
+      </div>
+    </div>
+  {% else %}
+    <p>No tech news yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

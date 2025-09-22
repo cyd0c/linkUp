@@ -1,0 +1,113 @@
+{% extends "layouts/base.html" %}
+
+{% block stylesheets %}
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(to bottom, #87a3b8, #2f4858);
+        color: white;
+    }
+
+    /* Centered Container */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    /* Card Styling */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        width: 90%;
+        max-width: 700px;
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background-color: rgba(0, 51, 102, 0.8);
+        border-radius: 20px 20px 0 0;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+    /* Schedule Styling */
+    .schedule-item {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .schedule-item:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+    }
+
+    /* Links */
+    a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+    }
+
+    a:hover {
+        color: #d9e2ec;
+    }
+
+    /* Timestamp Style */
+    .timestamp {
+        font-size: 14px;
+        color: #d0d0d0;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            📅 Schedule History
+        </div>
+        <div class="card-body">
+            {% if current_user.role == "Caregiver" %}
+                <h3 class="text-center">My Approved Schedules</h3>
+            {% elif current_user.role == "Family" %}
+                <h3 class="text-center">Schedules I Booked</h3>
+            {% elif current_user.role == "Admin" %}
+                <h3 class="text-center">All Approved Schedules</h3>
+            {% endif %}
+
+            {% if schedules %}
+                {% for schedule in schedules %}
+                    <div class="schedule-item">
+                        <h5 class="card-title">
+                            {% if current_user.role == "Caregiver" %}
+                                Family User: {{ schedule.family_user.username }}
+                            {% elif current_user.role == "Family" %}
+                                Caregiver: {{ schedule.caregiver.username }}
+                            {% else %}
+                                Caregiver: {{ schedule.caregiver.username }} | Family User: {{ schedule.family_user.username }}
+                            {% endif %}
+                        </h5>
+                        <p><strong>Start Time:</strong> {{ schedule.start_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>End Time:</strong> {{ schedule.end_time.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p><strong>Status:</strong> {{ schedule.status }}</p>
+                        <p><strong>Payment Status:</strong> Approved</p>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center">No approved schedules found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

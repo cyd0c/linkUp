@@ -1,0 +1,105 @@
+{% extends "layouts/base.html" %}
+
+{% block stylesheets %}
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(to bottom, #87a3b8, #2f4858);
+        color: white;
+    }
+
+    /* Centered Container */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    /* Card Styling */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .card-header {
+        background-color: rgba(0, 51, 102, 0.8);
+        border-radius: 20px 20px 0 0;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+        font-size: 22px;
+    }
+
+    /* List Styling */
+    .inbox-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .inbox-list li {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px;
+        border-radius: 10px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .inbox-list li:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(1.02);
+    }
+
+    /* Links */
+    .inbox-list a {
+        text-decoration: none;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .inbox-list a:hover {
+        color: #d9e2ec;
+    }
+
+    /* Timestamp Style */
+    .timestamp {
+        font-size: 14px;
+        color: #d0d0d0;
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            📩 Inbox
+        </div>
+        <div class="card-body">
+            {% if conversations %}
+            <ul class="inbox-list">
+                {% for convo in conversations %}
+                <li>
+                    <a href="{{ url_for('chat', user_id=convo.user_id) }}">
+                        <span>{{ convo.username }}</span>
+                        <span class="timestamp">{{ convo.timestamp }}</span>
+                    </a>
+                    <p class="text-muted small">Last Message: {{ convo.last_message }}</p>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-center">No conversations yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

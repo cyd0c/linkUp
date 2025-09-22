@@ -1,0 +1,134 @@
+{% extends "layouts/base.html" %}
+
+{% block stylesheets %}
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(to bottom, #87a3b8, #2f4858);
+        color: white;
+    }
+
+    /* Card Styling */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    .card-header {
+        background-color: rgba(0, 51, 102, 0.8);
+        border-radius: 20px 20px 0 0;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    /* Chat Box */
+    #chat-box {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        padding: 15px;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    #chat-box p {
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        max-width: 80%;
+    }
+
+    /* Different message styles */
+    .sent {
+        background: rgba(0, 123, 255, 0.7);
+        align-self: flex-end;
+        text-align: right;
+    }
+
+    .received {
+        background: rgba(255, 255, 255, 0.3);
+        align-self: flex-start;
+    }
+
+    /* Message Input */
+    .chat-input {
+        display: flex;
+        margin-top: 15px;
+    }
+
+    .chat-input input {
+        flex: 1;
+        padding: 12px;
+        border-radius: 15px;
+        border: 2px solid #1b3a57;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+
+    .chat-input input::placeholder {
+        color: #d0d0d0;
+    }
+
+    .chat-input button {
+        background-color: #0a3d62;
+        border-radius: 15px;
+        padding: 12px 20px;
+        font-weight: bold;
+        margin-left: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .chat-input button:hover {
+        background-color: #0a2f4e;
+        transform: scale(1.05);
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h4>Chat with {{ recipient.username }}</h4>
+        </div>
+        <div class="card-body">
+            <div id="chat-box">
+                {% for msg in messages %}
+                <p class="{{ 'sent' if msg.sender_id == current_user.id else 'received' }}">
+                    <strong>{{ 'You' if msg.sender_id == current_user.id else recipient.username }}:</strong> {{ msg.message_text }}
+                </p>
+                {% endfor %}
+            </div>
+            <div class="chat-input">
+                <input type="text" id="message" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sendMessage() {
+        let message = document.getElementById('message').value;
+        fetch("{{ url_for('send_message') }}", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ receiver_id: {{ recipient.id }}, message_text: message })
+        }).then(response => response.json()).then(data => {
+            if (data.message === "Message sent successfully") {
+                let chatBox = document.getElementById("chat-box");
+                let newMessage = document.createElement("p");
+                newMessage.classList.add("sent");
+                newMessage.innerHTML = `<strong>You:</strong> ${message}`;
+                chatBox.appendChild(newMessage);
+                document.getElementById("message").value = "";
+                chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
+            }
+        });
+    }
+</script>
+{% endblock %}

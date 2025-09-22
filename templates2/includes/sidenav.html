@@ -1,0 +1,121 @@
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/assets/css/custom.css">
+{% endblock %}
+
+<nav class="sidenav navbar navbar-vertical  fixed-left  navbar-expand-xs navbar-light bg-white" id="sidenav-main">
+  <div class="scrollbar-inner">
+    <!-- Brand -->
+    <div class="sidenav-header  align-items-center">
+      <a class="navbar-brand" href="/">
+        <img src="{{ url_for('static', filename='assets/img/brand/sidebar-bg.jpg') }}" 
+        class="logo-circle"
+             alt="App Logo" 
+             > </a>
+    </div>
+    <div class="navbar-inner">
+      
+      <!-- Collapse -->
+      <div class="collapse navbar-collapse" id="sidenav-collapse-main"><br>
+             ___SILVER SUPPORT__
+        <!-- Nav items -->
+        <ul class="navbar-nav">
+          {% if current_user.role == 'Admin' %}
+            <!-- Add admin links here -->
+          
+          {% elif current_user.role == 'Family' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('home') }}">
+                <i class="ni ni-tv-2 text-primary"></i>
+                <span class="nav-link-text">Home</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_family_schedule') }}">
+                <i class="ni ni-calendar-grid-58 text-info"></i>
+                <span class="nav-link-text">Schedules</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('update_profile') }}">
+                <i class="ni ni-single-02 text-info"></i>
+                <span class="nav-link-text">Update Profile</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('predict_cardio') }}">
+                <i class="fas fa-heartbeat text-danger"></i>
+
+                <span class="nav-link-text">CVD Prediction</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('predict_stroke') }}">
+                <i class="ni ni-ambulance text-danger"></i>
+                <span class="nav-link-text">Stroke Prediction</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('search_caregivers') }}">
+                <i class="ni ni-badge text-info"></i>
+                <span class="nav-link-text">Find Caregiver</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_pending_payouts') }}">
+                <i class="ni ni-money-coins text-warning"></i>
+                <span class="nav-link-text">Pending Payments</span>
+              </a>
+            </li>
+
+          {% elif current_user.role == 'Caregiver' %}
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('home') }}">
+                <i class="ni ni-tv-2 text-primary"></i>
+                <span class="nav-link-text">Home</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('update_profile') }}">
+                <i class="ni ni-single-02 text-info"></i>
+                <span class="nav-link-text">Update Profile</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('update_availability') }}">
+                <i class="ni ni-time-alarm text-info"></i>
+                <span class="nav-link-text">Update Availability</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_caregiver_schedule') }}">
+                <i class="ni ni-calendar-grid-58 text-info"></i>
+                <span class="nav-link-text">Schedules</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('view_earnings') }}">
+                <i class="ni ni-money-coins text-success"></i>
+                <span class="nav-link-text">Earnings</span>
+              </a>
+            </li>
+          {% endif %}
+
+          <li class="nav-item">
+            <a class="nav-link" href="{{ url_for('inbox_page') }}">
+              <i class="ni ni-email-83 text-info"></i>
+              <span class="nav-link-text">Messages</span>
+            </a>
+          </li>
+
+          <li class="nav-item">
+            <a class="nav-link" href="/logout">
+              <i class="ni ni-user-run text-red"></i>
+              <span class="nav-link-text">Logout</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>

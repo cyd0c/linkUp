@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>User Profile: {{ user.username }}</h2>
+
+<p><b>Role:</b> {{ user.role }}</p>
+<p><b>Status:</b> {{ user.status }}</p>
+{% if user.proof_file %}
+  <p><b>Proof File:</b> 
+    <a href="{{ url_for('static', filename=user.proof_file) }}" target="_blank">View Proof</a>
+  </p>
+{% endif %}
+
+<!-- Badge -->
+{% if user.badge %}
+  <p><span class="badge bg-success">{{ user.badge }}</span></p>
+{% endif %}
+
+<!-- Bio -->
+{% if user.bio %}
+  <p><b>Bio:</b> {{ user.bio }}</p>
+{% else %}
+  <p class="text-muted"><i>No bio provided.</i></p>
+{% endif %}
+
+<!-- Skills -->
+{% if user.skills %}
+  <p><b>Skills:</b> {{ user.skills }}</p>
+{% endif %}
+
+<!-- Resume -->
+{% if user.resume %}
+  <p><b>Resume:</b> 
+    <a href="{{ url_for('static', filename=user.resume) }}" target="_blank">📄 View Resume</a>
+  </p>
+{% endif %}
+<p><b>Email:</b> {{ user.email }}</p>
+
+{% if user.role == "Student" %}
+  <p><b>College ID:</b> {{ user.college_id }}</p>
+{% endif %}
+
+{% if user.role == "Client" %}
+  <p><b>Company:</b> {{ user.company_name }}</p>
+  <p><b>Address:</b> {{ user.company_address }}</p>
+  <p><b>Contact:</b> {{ user.contact_number }}</p>
+  <p><b>Website:</b> <a href="{{ user.website }}" target="_blank">{{ user.website }}</a></p>
+{% endif %}
+
+
+
+
+<!-- Profile Picture -->
+{% if user.profile_pic %}
+  <img src="{{ url_for('static', filename=user.profile_pic) }}" width="120" class="rounded-circle">
+{% endif %}
+
+<hr>
+
+<!-- Verified Projects if Student -->
+{% if user.role == "Student" %}
+  <h4>Verified Projects</h4>
+  {% if projects %}
+    <ul>
+      {% for p in projects %}
+        <li>{{ p.job.title }} ✅</li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="text-muted">No verified projects yet.</p>
+  {% endif %}
+{% endif %}
+
+<hr>
+
+<form method="post" action="{{ url_for('admin.approve_user', user_id=user.id) }}" class="d-inline">
+  <button class="btn btn-success">Approve</button>
+</form>
+
+<form method="post" action="{{ url_for('admin.reject_user', user_id=user.id) }}" class="d-inline">
+  <button class="btn btn-danger">Reject</button>
+</form>
+
+<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">⬅ Back</a>
+{% endblock %}

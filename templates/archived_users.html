@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>🗑️ Archived Users</h2>
+
+<table class="table table-bordered">
+  <tr>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Reason</th>
+    <th>Removed At</th>
+  </tr>
+  {% for u in removed_users %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.role }}</td>
+    <td>{{ u.reason }}</td>
+    <td>{{ u.removed_at.strftime('%Y-%m-%d %H:%M') }}</td>
+  </tr>
+  {% else %}
+  <tr>
+    <td colspan="6">No removed users.</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="{{ url_for('admin.admin_dashboard') }}" class="btn btn-secondary">⬅ Back to Dashboard</a>
+{% endblock %}

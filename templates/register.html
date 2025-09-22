@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Register</h2>
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label>Username</label>
+    <input type="text" name="username" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Password</label>
+    <input type="password" name="password" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Role</label>
+    <select name="role" class="form-select" id="roleSelect">
+      <option value="Student">Student</option>
+      <option value="Client">Client</option>
+    </select>
+  </div>
+
+  <!-- Student fields -->
+  <div id="studentFields" style="display:none;">
+    <div class="mb-3">
+      <label>College ID</label>
+      <input type="text" name="college_id" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Proof Document (PDF/Image)</label>
+      <input type="file" name="student_proof" class="form-control" >
+
+    </div>
+  </div>
+
+  <!-- Client fields -->
+  <div id="clientFields" style="display:none;">
+    <div class="mb-3">
+      <label>Company Name</label>
+      <input type="text" name="company_name" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Company Address</label>
+      <textarea name="company_address" class="form-control"></textarea>
+    </div>
+    <div class="mb-3">
+      <label>Contact Number</label>
+      <input type="text" name="contact_number" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Website</label>
+      <input type="url" name="website" class="form-control">
+    </div>
+    <div class="mb-3">
+      <label>Proof Document (PDF/Image)</label>
+      <input type="file" name="client_proof" class="form-control" >
+
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-primary">Register</button>
+
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  function toggleFields() {
+    let role = document.getElementById("roleSelect").value;
+    document.getElementById("studentFields").style.display = (role === "Student") ? "block" : "none";
+    document.getElementById("clientFields").style.display = (role === "Client") ? "block" : "none";
+  }
+
+  let roleSelect = document.getElementById("roleSelect");
+  if (roleSelect) {
+    roleSelect.addEventListener("change", toggleFields);
+    toggleFields(); // run once on page load
+  }
+});
+</script>
+s
+
+
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "layouts/base.html" %}
+
+{% block stylesheets %}
+<style>
+    /* Background */
+    body {
+        background: linear-gradient(to bottom, #87a3b8, #2f4858);
+        color: white;
+    }
+
+    /* Card Styling */
+    .card {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+    }
+
+    .card-header {
+        background-color: rgba(0, 51, 102, 0.8);
+        border-radius: 20px 20px 0 0;
+    }
+
+    /* Form Fields */
+    .form-control {
+        border-radius: 15px;
+        padding: 12px;
+        border: 2px solid #1b3a57;
+        background-color: rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+    .form-control::placeholder {
+        color: #d0d0d0;
+    }
+    label {
+        font-weight: bold;
+        color: #d9e2ec;
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background-color: #0a3d62;
+        border-radius: 25px;
+        font-size: 18px;
+        padding: 12px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+    .btn-primary:hover {
+        background-color: #0a2f4e;
+        transform: scale(1.05);
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container mt-5">
+    <form action="{{ url_for('delete_account') }}" method="POST" onsubmit="return confirm('Are you sure you want to delete your account? This action is permanent.');">
+        <button type="submit" class="btn btn-danger">Delete My Account</button>
+    </form> 
+    
+   
+    <div class="card shadow-sm">
+        
+        <div class="card-header text-center" >
+            <h4 class="text-center" style="color: #d0d0d0;">Update Profile</h4>
+            <h2 style="color: #d0d0d0;">Edit Your Information</h2>
+            
+        </div>
+       
+        <div class="card-body">
+            <form method="POST" enctype="multipart/form-data">
+                <div class="text-center mb-3">
+                    <img src="{{ url_for('static', filename=user.profile_picture) if user.profile_picture else url_for('static', filename='images/default-profile.png') }}" 
+                         alt="Profile Picture" 
+                         class="img-fluid rounded-circle" 
+                         style="width: 150px; height: 150px;">
+                </div>
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username:</label>
+                    <input type="text" name="username" id="username" class="form-control" value="{{ user.username }}" required>
+                </div>
+
+                <div class="mb-3">  
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="email" name="email" id="email" class="form-control" value="{{ user.email }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="certification" class="form-label">Upload New Certification:</label>
+                    <input type="file" name="certification" id="certification" class="form-control">
+                    {% if user.certifications %}
+                        <small class="text-muted">Current File: <a href="{{ url_for('static', filename=user.certifications) }}" target="_blank">View</a></small>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="experience" class="form-label">Upload New Experience Document:</label>
+                    <input type="file" name="experience" id="experience" class="form-control">
+                    {% if user.experience_file %}
+                        <small class="text-muted">Current File: <a href="{{ url_for('static', filename=user.experience_file) }}" target="_blank">View</a></small>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="profile_picture" class="form-label">Upload Profile Picture:</label>
+                    <input type="file" name="profile_picture" id="profile_picture" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone" class="form-label">Phone:</label>
+                    <input type="text" name="phone" id="phone" class="form-control" value="{{ user.phone }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="location" class="form-label">Location:</label>
+                    <input type="text" name="location" id="location" class="form-control" value="{{ user.location }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="age" class="form-label">Age:</label>
+                    <input type="number" name="age" id="age" class="form-control" value="{{ user.age }}">
+                </div>
+
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary w-100 mt-3">Update Profile</button>
+                </div>   
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

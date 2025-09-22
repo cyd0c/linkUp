@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+
+  <!-- Profile Header -->
+  <div class="row mb-4">
+    <div class="col-md-3 text-center">
+      <img src="{{ url_for('static', filename=student.profile_pic or 'default_avatar.png') }}" 
+           class="rounded-circle shadow-sm mb-3 border" width="150" height="150" alt="Profile Pic">
+      {% if current_user.is_authenticated and current_user.id == student.id %}
+        <a href="{{ url_for('student.edit_profile') }}" class="btn btn-sm btn-outline-secondary w-100">
+          ✏ Edit Profile
+        </a>
+      {% endif %}
+    </div>
+    <div class="col-md-9">
+      <h2 class="mb-1">{{ student.username }}</h2>
+      {% if student.badge %}
+        <span class="badge bg-success">{{ student.badge }}</span>
+      {% endif %}
+      {% if student.average_rating %}
+        <p class="mt-2">⭐ {{ "%.1f"|format(student.average_rating) }}/5 
+          ({{ student.review_count }} reviews)
+        </p>
+      {% endif %}
+      <p><b>Bio:</b> {{ student.bio or "No bio added yet." }}</p>
+
+      <!-- Skills as badges -->
+      <div class="mb-2">
+        <b>Skills:</b><br>
+        {% if student.skills %}
+          {% for skill in student.skills.split(',') %}
+            <span class="badge bg-primary me-1">{{ skill.strip() }}</span>
+          {% endfor %}
+        {% else %}
+          <span class="text-muted">No skills listed.</span>
+        {% endif %}
+      </div>
+
+      <!-- Resume -->
+      {% if student.resume %}
+        <a href="{{ url_for('static', filename=student.resume) }}" 
+           class="btn btn-sm btn-outline-primary" target="_blank">📄 View Resume</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- Verified Projects -->
+  <h3>Verified Projects</h3>
+  <div class="row">
+    {% for p in projects %}
+      <div class="col-md-4">
+        <div class="card mb-3 shadow-sm h-100">
+          <div class="card-body d-flex flex-column">
+            <h5 class="card-title">{{ p.job.title }}</h5>
+            <p class="card-text"><span class="badge bg-success">✅ Verified</span></p>
+
+            {% if p.final_file %}
+              <a href="{{ url_for('static', filename=p.final_file) }}" 
+                 class="btn btn-sm btn-primary mb-2" download>⬇ Download Work</a>
+            {% endif %}
+
+            <h6>Reviews</h6>
+            <div class="small">
+              {% for r in p.reviews %}
+                <p>⭐ {{ r.rating }} – {{ r.text }}<br>
+                  <small class="text-muted">by {{ r.reviewer.username }}</small>
+                </p>
+              {% else %}
+                <p class="text-muted"><em>No reviews yet.</em></p>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% else %}
+      <p>No verified projects yet.</p>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

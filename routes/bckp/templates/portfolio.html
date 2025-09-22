@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-md-3 text-center">
+    <img src="{{ url_for('static', filename=student.profile_pic) }}" 
+         class="rounded-circle shadow-sm mb-3" width="150" alt="Profile Pic">
+    {% if current_user.is_authenticated and current_user.id == student.id %}
+      <a href="{{ url_for('student.edit_profile') }}" class="btn btn-sm btn-outline-secondary">✏ Edit Profile</a>
+    {% endif %}
+  </div>
+  <div class="col-md-9">
+    <h2>{{ student.username }}</h2>
+    {% if student.badge %}
+      <span class="badge bg-success">{{ student.badge }}</span>
+    {% endif %}
+    {% if student.average_rating %}
+      <p>⭐ {{ "%.1f"|format(student.average_rating) }}/5 ({{ student.review_count }} reviews)</p>
+    {% endif %}
+    <p><b>Bio:</b> {{ student.bio or "No bio added yet." }}</p>
+    <p><b>Skills:</b> {{ student.skills or "No skills listed." }}</p>
+    {% if student.resume %}
+      <a href="{{ url_for('static', filename=student.resume) }}" class="btn btn-sm btn-outline-primary" target="_blank">
+        📄 View Resume
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<hr>
+
+<h3>Verified Projects</h3>
+<div class="row">
+  {% for p in projects %}
+    <div class="col-md-4">
+      <div class="card mb-3 shadow-sm">
+        <div class="card-body">
+          <h5>{{ p.job.title }}</h5>
+          {% if p.final_file %}
+            <a href="{{ url_for('static', filename=p.final_file) }}" class="btn btn-sm btn-primary" download>Download Work</a>
+          {% endif %}
+          <hr>
+          <h6>Reviews</h6>
+          {% for r in p.reviews %}
+            <p>⭐ {{ r.rating }} – {{ r.text }} <small>by {{ r.reviewer.username }}</small></p>
+          {% else %}
+            <p class="text-muted"><em>No reviews yet.</em></p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p>No verified projects yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

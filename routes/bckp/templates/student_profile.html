@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ student.username }}'s Profile</h2>
+
+<p><b>Email:</b> {{ student.email or 'N/A' }}</p>
+<p><b>Phone:</b> {{ student.phone or 'N/A' }}</p>
+<p><b>Bio:</b> {{ student.bio or 'No bio provided.' }}</p>
+
+{% if student.average_rating %}
+  <p><b>⭐ Average Rating:</b> {{ "%.1f"|format(student.average_rating) }}/5 
+  ({{ student.review_count }} reviews)</p>
+{% else %}
+  <p><b>⭐ Average Rating:</b> No reviews yet.</p>
+{% endif %}
+
+<h3>Verified Portfolio Projects</h3>
+<ul>
+  {% for p in projects %}
+    <li>
+      <b>{{ p.job.title }}</b> ✅ Verified
+      {% if p.final_file %}
+        – <a href="{{ url_for('static', filename=p.final_file) }}" download>Download Work</a>
+      {% endif %}
+      <ul>
+        {% for r in p.reviews %}
+          <li>⭐ {{ r.rating }} - {{ r.text }} (by {{ r.reviewer.username }})</li>
+        {% else %}
+          <li>No reviews for this project.</li>
+        {% endfor %}
+      </ul>
+    </li>
+  {% else %}
+    <li>No verified projects yet.</li>
+  {% endfor %}
+</ul>
+
+<a href="{{ url_for('dashboard') }}">⬅ Back to Dashboard</a>
+{% endblock %}

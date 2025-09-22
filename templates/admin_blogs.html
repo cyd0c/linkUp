@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Manage Blogs</h2>
+
+<h3>⏳ Pending Blogs</h3>
+<ul>
+  {% for blog in pending %}
+    <li>
+      <b>{{ blog.title }}</b> by {{ blog.author.username }}
+      <form method="post" action="{{ url_for('admin.approve_blog', blog_id=blog.id) }}" class="d-inline">
+        <button class="btn btn-sm btn-success">Approve</button>
+      </form>
+      <form method="post" action="{{ url_for('admin.reject_blog', blog_id=blog.id) }}" class="d-inline">
+        <button class="btn btn-sm btn-danger">Reject</button>
+      </form>
+    </li>
+  {% else %}
+    <li>No pending blogs</li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h3>✅ Approved Blogs</h3>
+<ul>
+  {% for blog in approved %}
+    <li><b>{{ blog.title }}</b> by {{ blog.author.username }}</li>
+  {% else %}
+    <li>No approved blogs yet</li>
+  {% endfor %}
+</ul>
+
+<hr>
+
+<h3>❌ Rejected Blogs</h3>
+<ul>
+  {% for blog in rejected %}
+    <li><b>{{ blog.title }}</b> by {{ blog.author.username }}</li>
+  {% else %}
+    <li>No rejected blogs</li>
+  {% endfor %}
+</ul>
+{% endblock %}

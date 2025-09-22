@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-person-badge-fill"></i> Freelancer Dashboard</h1>
+    <a href="#" class="btn btn-outline-secondary btn-sm">
+      <i class="bi bi-pencil-square me-1"></i> Edit Your Profile
+    </a>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-4 mb-3">
+      <div class="card bg-light border-primary shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-primary">ACTIVE PROJECTS</h6>
+            <p class="fs-2 fw-bold mb-0">{{ projects|length }}</p>
+          </div>
+          <i class="bi bi-kanban-fill fs-1 text-primary opacity-25"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+      <div class="card bg-light border-info shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-info">JOBS APPLIED</h6>
+            <p class="fs-2 fw-bold mb-0">0</p> </div>
+          <i class="bi bi-send-check-fill fs-1 text-info opacity-25"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-4 mb-3">
+  <div class="card bg-light border-success shadow-sm h-100">
+    <div class="card-body d-flex justify-content-between align-items-center">
+      <div>
+        <h6 class="card-title text-success">MONTHLY EARNINGS</h6>
+        <p class="fs-2 fw-bold mb-0">${{ monthly_earnings }}</p>
+      </div>
+      <i class="bi bi-cash-coin fs-1 text-success opacity-25"></i>
+    </div>
+  </div>
+</div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-lg-7 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-bold d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-search me-2"></i>Available Jobs</span>
+          <a href="#" class="btn btn-sm btn-outline-primary">Browse All</a>
+        </div>
+        <div class="list-group list-group-flush">
+          {% for job in jobs %}
+            <div class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1 fw-bold">{{ job.title }}</h5>
+                <span class="text-success fw-bold fs-5">${{ job.budget }}</span>
+              </div>
+              <p class="mb-1 text-muted">Posted by: {{ job.client.username }}</p>
+<a href="{{ url_for('student.job_detail', job_id=job.id) }}">View & Apply</a>
+
+            </div>
+          {% else %}
+            <div class="card-body text-center text-muted">
+              <p class="fs-4">🎉</p>
+              <h5>All clear for now!</h5>
+              <p>No new jobs match your profile at the moment. Check back soon!</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-5 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-bold">
+          <i class="bi bi-folder-check me-2"></i>Your Active Projects
+        </div>
+        <div class="list-group list-group-flush">
+          {% for p in projects %}
+            <div class="list-group-item">
+              <div class="d-flex w-100 justify-content-between align-items-start">
+                <div>
+                  <h6 class="mb-1 fw-bold">{{ p.job.title }}</h6>
+                  <small class="text-muted">Client: {{ p.job.client.username }}</small>
+                </div>
+                {% if p.status == 'in progress' %}
+                  <span class="badge bg-warning text-dark">{{ p.status|title }}</span>
+                {% elif p.status == 'submitted' %}
+                  <span class="badge bg-info">{{ p.status|title }}</span>
+                {% elif p.status == 'completed' %}
+                  <span class="badge bg-success">{{ p.status|title }}</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ p.status|title }}</span>
+                {% endif %}
+              </div>
+              <div class="mt-3">
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('message.project_messages', project_id=p.id) }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
+                <a class="btn btn-sm btn-outline-primary" href="{{ url_for('student.update_project', project_id=p.id) }}"><i class="bi bi-pencil-fill me-1"></i> Update Progress</a>
+              </div>
+            </div>
+          {% else %}
+            <div class="card-body text-center text-muted">
+                <p class="fs-4">🚀</p>
+                <h5>Ready to start?</h5>
+                <p>Your accepted projects will appear here. Apply to a job to get started!</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

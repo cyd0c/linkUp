@@ -1,0 +1,118 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} My Reviews - Caregiver Dashboard {% endblock %}
+
+{% block stylesheets %}
+<style>
+    body {
+        background: linear-gradient(to bottom, #87a3b8, #2f4858);
+        color: white;
+    }
+
+    .card-custom {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease-in-out;
+        color: white;
+        padding: 1.5rem;
+    }
+
+    .card-custom:hover {
+        transform: translateY(-5px);
+        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .review-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+    }
+
+    .review-meta {
+        font-size: 0.9rem;
+        color: #d9e2ec;
+    }
+
+    .review-text {
+        font-size: 1rem;
+        margin-top: 8px;
+        color: white;
+    }
+
+    .reply-form textarea {
+        resize: none;
+    }
+
+    .no-reviews {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+    }
+
+    .container {
+        margin-top: 3rem;
+    }
+
+    .alert-info {
+        background: rgba(255, 255, 255, 0.3);
+        color: white;
+        border-radius: 10px;
+    }
+
+    .btn-success {
+        background-color: #0a3d62;
+        border: none;
+        border-radius: 12px;
+        padding: 6px 14px;
+        font-weight: bold;
+        transition: 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #0a2f4e;
+        transform: scale(1.05);
+    }
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<div class="container">
+    <h2 class="text-center mb-4">📝 Reviews from Families</h2>
+
+    {% if reviews %}
+        <div class="row">
+            {% for review in reviews %}
+                <div class="col-md-6">
+                    <div class="card card-custom mb-4">
+                        <div class="review-title">⭐ {{ review.rating }} / 5</div>
+                        <div class="review-meta">From: {{ review.family_user.username }}</div>
+                        <div class="review-text">{{ review.review_text or 'No comment' }}</div>
+                        <div class="review-meta mt-2">{{ review.timestamp.strftime('%b %d, %Y') }}</div>
+
+                        {% if review.reply_text %}
+                            <div class="alert alert-info mt-3">
+                                <strong>Your Reply:</strong> {{ review.reply_text }}
+                            </div>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('reply_to_review', review_id=review.id) }}" class="reply-form mt-3">
+                                <div class="form-group">
+                                    <label for="reply_text">Reply to this review:</label>
+                                    <textarea name="reply_text" class="form-control mt-1" rows="2" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-sm btn-success mt-2">Reply</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="no-reviews">You have no reviews yet.</div>  
+    {% endif %}
+</div>
+{% endblock %}

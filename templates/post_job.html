@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row">
+    <div class="col-12 text-center mb-4">
+      <h1 class="fw-bold">Post a New Job</h1>
+      <p class="text-muted">Fill out the details below to attract the best talent for your project.</p>
+    </div>
+  </div>
+
+  <div class="row justify-content-center">
+    <!-- Form Column -->
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-body p-4 p-md-5">
+          <form method="post" novalidate>
+            <!-- Job Title -->
+            <div class="mb-4">
+              <label for="title" class="form-label fw-bold">Job Title</label>
+              <input type="text" class="form-control form-control-lg" id="title" name="title" placeholder="e.g., Senior Python Developer for a Fintech App" required>
+              <div class="form-text">Choose a title that is clear, concise, and descriptive.</div>
+            </div>
+
+            <!-- Job Description -->
+            <div class="mb-4">
+              <label for="description" class="form-label fw-bold">Project Description</label>
+              <textarea class="form-control" id="description" name="description" rows="8" placeholder="Describe the project scope, deliverables, required skills, and any other relevant details. The more detail, the better!" required></textarea>
+            </div>
+
+            <div class="row">
+              <!-- Category -->
+              <div class="col-md-6 mb-4">
+                <label for="category" class="form-label fw-bold">Category</label>
+                <select class="form-select" id="category" name="category">
+                  <option selected disabled>Select a category...</option>
+                  <option value="web-dev">Web Development</option>
+                  <option value="mobile-dev">Mobile Development</option>
+                  <option value="design">Graphic Design & UI/UX</option>
+                  <option value="writing">Content Writing & SEO</option>
+                  <option value="data-science">Data Science & AI</option>
+                </select>
+              </div>
+              <!-- Budget -->
+              <div class="col-md-6 mb-4">
+                <label for="budget" class="form-label fw-bold">Budget ($)</label>
+                <div class="input-group">
+                  <span class="input-group-text">$</span>
+                  <input type="number" class="form-control" id="budget" name="budget" placeholder="e.g., 1500" step="10" min="0">
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+                <!-- Experience Level -->
+                <div class="col-md-6 mb-4">
+                    <label for="experience" class="form-label fw-bold">Experience Level</label>
+                    <select class="form-select" id="experience" name="experience">
+                      <option value="entry">Entry Level</option>
+                      <option value="intermediate" selected>Intermediate</option>
+                      <option value="expert">Expert</option>
+                    </select>
+                </div>
+                <!-- Project Duration -->
+                <div class="col-md-6 mb-4">
+                    <label for="duration" class="form-label fw-bold">Estimated Duration</label>
+                    <select class="form-select" id="duration" name="duration">
+                      <option value="short">Less than 1 month</option>
+                      <option value="medium" selected>1 to 3 months</option>
+                      <option value="long">More than 3 months</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Required Skills -->
+            <div class="mb-4">
+              <label for="skills" class="form-label fw-bold">Required Skills</label>
+              <input type="text" class="form-control" id="skills" name="skills" placeholder="e.g., Python, Django, React, PostgreSQL">
+              <div class="form-text">Separate skills with a comma.</div>
+            </div>
+
+            <hr class="my-4">
+
+            <!-- Submit Button -->
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-lg">
+                <i class="bi bi-send-fill me-2"></i>Post Job Listing
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tips Column -->
+    <div class="col-lg-4 d-none d-lg-block">
+      <div class="card bg-light border-0">
+        <div class="card-body">
+          <h5 class="card-title fw-bold"><i class="bi bi-lightbulb-fill text-warning me-2"></i>Tips for a Great Job Post</h5>
+          <ul class="list-unstyled mt-3">
+            <li class="mb-2 d-flex">
+              <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+              <span><strong>Be Specific:</strong> Clearly outline the tasks and deliverables.</span>
+            </li>
+            <li class="mb-2 d-flex">
+              <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+              <span><strong>Set a Fair Budget:</strong> Research typical rates for the skills you need.</span>
+            </li>
+            <li class="mb-2 d-flex">
+              <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+              <span><strong>Define Your Ideal Freelancer:</strong> Mention required skills and experience level.</span>
+            </li>
+            <li class="d-flex">
+              <i class="bi bi-check-circle-fill text-success me-2 mt-1"></i>
+              <span><strong>Stay Engaged:</strong> Be prepared to answer questions from applicants promptly.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

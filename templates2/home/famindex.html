@@ -1,0 +1,213 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Home - Caregiver Dashboard {% endblock title %}
+
+<!-- Specific CSS -->
+{% block stylesheets %}
+<style>
+   /* Background */
+body {
+    background: linear-gradient(to bottom, #87a3b8, #2f4858);
+    color: white;
+}
+
+/* Card Styling */
+.card-custom {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    color: white;
+}
+.status-cancelled {
+    background-color: #dc3545;
+    color: white;
+}
+
+.card-custom:hover {
+    transform: scale(1.02);
+    box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Table */
+.table {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    color: white;
+}
+
+.table th {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+.table td {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+.status-accepted {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-paid {
+    background-color: #ffc107;
+    color: black;
+}
+
+/* Header */
+.header {
+    background: linear-gradient(to right, #2f4858, #4c7083);
+    padding: 40px;
+    
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Buttons */
+.btn-success, .btn-primary {
+    background-color: #0a3d62;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    color: white;
+    border: none;
+}
+
+.btn-success:hover, .btn-primary:hover {
+    background-color: #0a2f4e;
+    transform: scale(1.05);
+}
+
+/* Alerts */
+.alert-info {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+<li>
+   
+</li>
+
+
+<!-- Header -->
+<div class="header bg-primary pb-6 text-white text-center">
+  
+    <div class="container">
+        
+    </div>
+</div>
+
+<!-- Page content -->
+<div class="container-fluid mt--4">
+    <div class="row">
+        
+        <!-- Scheduled Sessions Card -->
+        <div class="col-lg-8">
+            <div class="card card-custom shadow-lg">
+                
+                <div class="card-header bg-info text-white">
+                    <h4><i class="bi bi-calendar-check"></i> Your Active Scheduled Sessions</h4>
+                    <a href="{{ url_for('view_schedule_history') }}">
+                        <button style="background-color: #2f4858; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;margin-left: 700px;margin-bottom:-100px ;">
+                            ⏳ View History
+                        </button>
+                    </a>
+                </div>
+                
+                <div class="card-body">
+                    {% if schedules %}
+                        <table class="table table-hover">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Caregiver</th>
+                                    <th>Start Time</th>
+                                    <th>End Time</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for schedule in schedules %}
+                                {% if not schedule.payments or not schedule.payments|selectattr("status", "equalto", "approved")|list %}
+                                {# Exclude paid schedules #}
+                                    <tr>
+                                        <td><i class="bi bi-person"></i> {{ schedule.caregiver.username }}</td>
+                                        <td><i class="bi bi-clock"></i> {{ schedule.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td><i class="bi bi-clock"></i> {{ schedule.end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>
+                                            <span class="status-badge 
+                                                {% if schedule.status == 'accepted' %} status-accepted 
+                                                {% elif schedule.status == 'paid' %} status-paid 
+                                                {% elif schedule.status == 'cancelled' %} bg-danger {% endif %}">
+                                                {{ schedule.status|capitalize }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <a  href="{{ url_for('chat', user_id=schedule.caregiver.id) }}" class="btn btn-primary btn-sm">
+                                                <i class="bi bi-chat-dots"></i> Message
+                                            </a>
+                                            {% if schedule.status == "scheduled" %}
+<form action="{{ url_for('cancel_schedule', schedule_id=schedule.id) }}" method="POST" style="display:inline;">
+    <button type="submit" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Are you sure you want to cancel this session?');">
+        ❌ Cancel
+    </button>
+</form>
+{% endif %}
+
+                                            
+                                        </td>
+                                       
+                                        
+ 
+
+                                         
+                                    </tr>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p class="text-center text-muted"><i class="bi bi-calendar-x"></i> You have no scheduled caregiving sessions.</p>
+                    {% endif %}
+                    
+                </div>
+            </div>
+        </div>
+       
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+
+<!-- Specific JS -->
+{% block javascripts %}
+<script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+{% endblock javascripts %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+  <h2>📚 All Blogs</h2>
+  {% for blog in blogs %}
+    <div class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <h5>{{ blog.title }}</h5>
+        <p>{{ blog.content[:200] }}...</p>
+        <small class="text-muted">By {{ blog.author.username }} ({{ blog.author.role }}) 
+        on {{ blog.created_at.strftime('%Y-%m-%d') }}</small>
+      </div>
+    </div>
+  {% else %}
+    <p>No blogs yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

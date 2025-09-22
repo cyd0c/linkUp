@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Post a Job</h2>
+<form method="post">
+  Title: <input name="title"><br>
+  Description: <textarea name="description"></textarea><br>
+  Budget: <input name="budget" type="number" step="0.01"><br>
+  <button type="submit">Post</button>
+</form>
+{% endblock %}

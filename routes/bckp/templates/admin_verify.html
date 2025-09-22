@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Pending Approval Codes</h2>
+<ul>
+  {% for p in projects %}
+    <li>
+      {{ p.job.title }} by {{ p.student.username }} - Code: {{ p.approval_code }}
+      <form method="post">
+        <input type="hidden" name="project_id" value="{{ p.id }}">
+        <button type="submit">Verify</button>
+      </form>
+    </li>
+  {% else %}
+    <li>No pending approvals</li>
+  {% endfor %}
+</ul>
+{% endblock %}

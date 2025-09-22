@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Edit My Profile</h2>
+<form method="post" enctype="multipart/form-data">
+  <div class="mb-3">
+    <label>Bio</label>
+    <textarea name="bio" class="form-control">{{ student.bio }}</textarea>
+  </div>
+  <div class="mb-3">
+    <label>Skills (comma separated)</label>
+    <input type="text" name="skills" value="{{ student.skills }}" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label>Resume (PDF)</label>
+    {% if student.resume %}
+      <p>Current: <a href="{{ url_for('static', filename=student.resume) }}" target="_blank">View Resume</a></p>
+    {% endif %}
+    <input type="file" name="resume" class="form-control">
+  </div>
+  <div class="mb-3">
+    <label>Profile Picture</label>
+    <img src="{{ url_for('static', filename=student.profile_pic) }}" width="80" class="d-block mb-2">
+    <input type="file" name="profile_pic" class="form-control">
+  </div>
+  <button class="btn btn-primary">Save</button>
+</form>
+{% endblock %}

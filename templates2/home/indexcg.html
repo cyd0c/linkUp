@@ -1,0 +1,333 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %} Home - Caregiver Dashboard {% endblock title %}
+
+{% block stylesheets %}
+<style>
+/* Background */
+body {
+    background: linear-gradient(to bottom, #87a3b8, #2f4858);
+    color: white;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Header Styling */
+.header {
+    background: rgba(0, 51, 102, 0.8);
+    padding: 30px;
+    border-radius: 1px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.header p {
+    font-size: 1.1rem;
+    color: #d9e2ec;
+}
+
+/* Glassmorphism Card */
+.card-custom {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease-in-out;
+}
+
+.card-custom:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* Table Styling */
+.table {
+    color: rgb(255, 0, 0);
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.table th {
+    background: rgba(0, 51, 102, 0.9);
+    color: white;
+    padding: 12px;
+    text-transform: uppercase;
+}
+
+.table td {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 12px;
+}
+/* Fix Hover Effect */
+.table-hover tbody tr:hover {
+    background: rgba(255, 255, 255, 0.2) !important; /* Keep a subtle background */
+    color: white !important; /* Prevent text from turning white */
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 7px 15px;
+    border-radius: 15px;
+    font-weight: bold;
+}
+
+.status-scheduled {
+    background-color: #ffc107;
+    color: black;
+}
+
+.status-accepted {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-rejected {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Buttons */
+.btn-action {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-action button {
+    flex: 1;
+    border-radius: 25px;
+    padding: 10px 15px;
+    font-weight: bold;
+    transition: all 0.3s ease-in-out;
+    border: none;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    color: black;
+}
+
+.btn-success:hover,
+.btn-danger:hover,
+.btn-warning:hover {
+    transform: scale(1.05);
+}
+
+/* Form Fields */
+.form-control {
+    border-radius: 15px;
+    padding: 12px;
+    border: 2px solid #1b3a57;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.form-control::placeholder {
+    color: #d0d0d0;
+}
+
+label {
+    font-weight: bold;
+    color: #515457;
+}
+
+/* Animated Fade-in */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-custom,
+.table {
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+
+</style>
+{% endblock stylesheets %}
+
+{% block content %}
+
+<!-- Header Section -->
+<div   class="header  pb-6 text-white text-center">
+    <div style="color: #2f4858;" class="container">
+        <h1 class="display-4">Caregiver Dashboard</h1>
+        <p class="lead">Manage your caregiving sessions efficiently</p>
+    </div>
+</div>
+
+
+<!-- Page Content -->
+<div class="container mt-8">
+    <div class="row">
+        <div class="col-lg-16 mx-auto">
+            <div class="card card-custom shadow-lg">
+                <div class="card-header  text-white" >
+                    <h4><i class="bi bi-calendar-check"></i> Your Active Scheduled Sessions</h4>
+                    <a href="{{ url_for('view_schedule_history') }}">
+                        <button style="background-color: #2f4858; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;margin-left: 700px;margin-bottom:-100px ;">
+                            ⏳ View History
+                        </button>
+                    </a>
+                </div>
+                
+                <div class="card-body">
+                    {% if schedules %}
+                    <table class="table table-hover table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Family Member</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Action</th>
+                                <th>Payment</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules %}
+                            {% if not schedule.payments or not schedule.payments|selectattr("status", "equalto", "approved")|list %}
+                            <tr>
+                                <td><i class="bi bi-person-fill"></i> {{ schedule.family_user.username }}</td>
+                                <td><i class="bi bi-clock-fill"></i> {{ schedule.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td><i class="bi bi-clock-fill"></i> {{ schedule.end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    {% if schedule.status == "scheduled" %}
+                                        <div class="btn-action">
+                                            <form method="POST" action="{{ url_for('accept_schedule', schedule_id=schedule.id) }}">
+                                                <button type="submit" class="btn btn-success btn-sm">
+                                                    <i class="bi bi-check-circle"></i> Accept
+                                                </button>
+                                            </form>
+                                            <form method="POST" action="{{ url_for('reject_schedule', schedule_id=schedule.id) }}">
+                                                <button type="submit" class="btn btn-danger btn-sm">
+                                                    <i class="bi bi-x-circle"></i> Reject
+                                                </button>
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <span><i class="bi bi-info-circle"></i> Already {{ schedule.status }}</span>
+                                    {% endif %}
+                                  
+                                   
+                                </td>
+                                <td>
+                                    <form method="POST" action="{{ url_for('request_payout', schedule_id=schedule.id) }}">
+                                        <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                                        <button type="submit" class="btn btn-warning btn-sm" {% if schedule.payments %}disabled{% endif %}>
+                                            {% if schedule.payments %}
+                                                {% for payment in schedule.payments %}
+                                                    <span class="status-badge 
+                                                        {% if payment.status == 'pending' %} status-pending
+                                                        {% elif payment.status == 'approved' %} status-approved
+                                                        {% elif payment.status == 'paid' %} status-paid {% endif %}">
+                                                        {{ payment.status|capitalize }}
+                                                    </span>
+                                                {% endfor %}
+                                            {% else %}
+                                                <i class="bi bi-cash-stack"></i> Request Payout
+                                            {% endif %}
+                                            
+                                        </button>
+                                        <a href="{{ url_for('chat', user_id=schedule.family_user_id) }}" class="btn btn-sm btn-dark px-2 py-1">
+                                            <i class="bi bi-chat-dots"></i> Chat
+                                        </a>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                        
+                    {% else %}
+                    {% if schedules %}
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Family Member</th>
+                                <th>Start Time</th>
+                                <th>End Time</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for schedule in schedules %}
+                                <tr>
+                                    <td>{{ schedule.family_user.username }}</td>
+                                    <td>{{ schedule.start_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ schedule.end_time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td>{{ schedule.status }}</td>
+                                    <td>
+                                        {% if schedule.status == "scheduled" %}
+                                            <form method="POST">
+                                                <input type="hidden" name="schedule_id" value="{{ schedule.id }}">
+                                                <button type="submit" name="action" value="accept">Accept</button>
+                                                <button type="submit" name="action" value="reject">Reject</button>
+                                            </form>
+                                        {% else %}
+                                            <span>Already {{ schedule.status }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p>You have no caregiving sessions scheduled.</p>
+                {% endif %}
+                    {% endif %}
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block javascripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        {% for schedule in schedules %}
+            fetch("{{ url_for('calculate_payout', schedule_id=schedule.id) }}")
+                .then(response => response.json())
+                .then(data => {
+                    if (data.amount) {
+                        document.getElementById("payout_amount_{{ schedule.id }}").value = `$${data.amount}`;
+                    }
+                })
+                .catch(error => console.error("Error fetching payout:", error));
+        {% endfor %}
+    });
+</script>
+
+<script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
+<script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+{% endblock javascripts %}

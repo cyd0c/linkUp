@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5">
+
+  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2"><i class="bi bi-person-workspace"></i> Client Dashboard</h1>
+    <a class="btn btn-primary" href="{{ url_for('client.post_job') }}">
+      <i class="bi bi-plus-circle-fill me-1"></i> Post a New Job
+    </a>
+  </div>
+
+  <div class="row mb-4">
+    <div class="col-md-6 col-lg-4 mb-3">
+      <div class="card bg-light border-primary shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-primary">OPEN JOBS</h6>
+            {# This Jinja filter counts jobs with the status 'open' #}
+            <p class="fs-2 fw-bold mb-0">{{ jobs|selectattr('status', 'equalto', 'open')|list|length }}</p>
+          </div>
+          <i class="bi bi-briefcase-fill fs-1 text-primary opacity-25"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 col-lg-4 mb-3">
+      <div class="card bg-light border-success shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-success">ACTIVE PROJECTS</h6>
+            <p class="fs-2 fw-bold mb-0">{{ projects|length }}</p>
+          </div>
+          <i class="bi bi-kanban-fill fs-1 text-success opacity-25"></i>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-12 col-lg-4 mb-3">
+       <div class="card bg-light border-secondary shadow-sm h-100">
+        <div class="card-body d-flex justify-content-between align-items-center">
+          <div>
+            <h6 class="card-title text-secondary">COMPLETED</h6>
+            <p class="fs-2 fw-bold mb-0">0</p> </div>
+          <i class="bi bi-check2-circle fs-1 text-secondary opacity-25"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-bold">
+          <i class="bi bi-card-list me-2"></i>Your Job Postings
+        </div>
+        <div class="list-group list-group-flush">
+          {% for job in jobs %}
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="mb-0 fw-bold">{{ job.title }}</h6>
+                {% if job.status == 'open' %}
+                  <span class="badge bg-success">Open for Bids</span>
+                {% elif job.status == 'in progress' %}
+                  <span class="badge bg-warning text-dark">In Progress</span>
+                {% else %}
+                  <span class="badge bg-secondary">{{ job.status|title }}</span>
+                {% endif %}
+              </div>
+              <a class="btn btn-sm btn-outline-primary" href="{{ url_for('student.job_detail', job_id=job.id) }}">View Details</a>
+            </div>
+          {% else %}
+            <div class="card-body text-center text-muted">
+              <p>You haven't posted any jobs yet.</p>
+              <p>Ready to find the perfect freelancer?</p>
+              <a class="btn btn-primary" href="{{ url_for('client.post_job') }}">Post Your First Job</a>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6 mb-4">
+      <div class="card shadow-sm h-100">
+        <div class="card-header fw-bold">
+          <i class="bi bi-person-check-fill me-2"></i>Your Projects & Freelancers
+        </div>
+        <div class="list-group list-group-flush">
+          {% for p in projects %}
+            <div class="list-group-item">
+              <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1 fw-bold">{{ p.job.title }}</h5>
+                <span class="badge rounded-pill bg-info text-dark">{{ p.status|title }}</span>
+              </div>
+              <div class="d-flex align-items-center my-2">
+                <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="Freelancer Avatar">
+                <div>
+                  <h6 class="mb-0">{{ p.student.username }}</h6>
+                  {% if p.student.badge %}
+                    <span class="badge bg-success small">{{ p.student.badge }}</span>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="mt-2">
+                 <a class="btn btn-sm btn-secondary" href="{{ url_for('message.project_messages', project_id=p.id) }}"><i class="bi bi-chat-dots-fill me-1"></i> Messages</a>
+                 <a class="btn btn-sm btn-info" href="{{ url_for('student.portfolio', student_id=p.student.id) }}"><i class="bi bi-person-badge me-1"></i> View Portfolio</a>
+              </div>
+            </div>
+          {% else %}
+            <div class="card-body text-center text-muted">
+                <p>You have no active projects.</p>
+                <p>Once you hire a freelancer, their project will appear here.</p>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

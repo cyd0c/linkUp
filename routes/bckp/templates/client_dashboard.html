@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Client Dashboard</h2>
+
+<p><a class="btn btn-primary" href="{{ url_for('client.post_job') }}">+ Post Job</a></p>
+
+<h4>Your Jobs</h4>
+<ul class="list-group">
+  {% for job in jobs %}
+    <li class="list-group-item">
+      <b>{{ job.title }}</b> - {{ job.status }}
+      <a class="btn btn-sm btn-info float-end" href="{{ url_for('student.job_detail', job_id=job.id) }}">View</a>
+    </li>
+  {% else %}
+    <li class="list-group-item">No jobs yet.</li>
+  {% endfor %}
+</ul>
+
+<h4 class="mt-4">Your Projects</h4>
+<ul class="list-group">
+  {% for p in projects %}
+    <li class="list-group-item">
+      <b>{{ p.job.title }}</b> - <span class="badge bg-secondary">{{ p.status }}</span>
+      <a class="btn btn-sm btn-secondary float-end ms-2" href="{{ url_for('message.project_messages', project_id=p.id) }}">Messages</a>
+      <a class="btn btn-sm btn-info float-end" href="{{ url_for('student.portfolio', student_id=p.student.id) }}">View Portfolio</a>
+      <div class="mt-2">
+        <b>{{ p.student.username }}</b>
+        {% if p.student.badge %}
+          <span class="badge bg-success">{{ p.student.badge }}</span>
+        {% endif %}
+      </div>
+    </li>
+  {% else %}
+    <li class="list-group-item">No projects yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

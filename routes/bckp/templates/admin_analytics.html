@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Admin Analytics Dashboard</h2>
+
+<h3>Users</h3>
+<ul>
+  <li>Total Users: {{ stats.total_users }}</li>
+  <li>Students: {{ stats.total_students }}</li>
+  <li>Clients: {{ stats.total_clients }}</li>
+  <li>Pending Students: {{ stats.pending_students }}</li>
+</ul>
+<h3>👥 All Users</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr>
+    <th>ID</th>
+    <th>Username</th>
+    <th>Email</th>
+    <th>Role</th>
+    <th>Status</th>
+    <th>Proof</th>
+    <th>Actions</th>
+  </tr>
+  {% for u in users %}
+  <tr>
+    <td>{{ u.id }}</td>
+    <td>{{ u.username }}</td>
+    <td>{{ u.email }}</td>
+    <td>{{ u.role }}</td>
+    <td>
+      {% if u.status == "approved" %}
+        ✅ Approved
+      {% elif u.status == "pending" %}
+        ⏳ Pending
+      {% else %}
+        ❌ Rejected
+      {% endif %}
+    </td>
+    <td>
+      {% if u.proof_file %}
+        <a href="{{ url_for('static', filename=u.proof_file) }}" target="_blank">View Proof</a>
+      {% else %}
+        -
+      {% endif %}
+    </td>
+<td>
+  <form method="post" action="{{ url_for('admin.approve_user', user_id=u.id) }}" style="display:inline;">
+    <button class="btn btn-sm btn-success">Approve</button>
+  </form>
+  <form method="post" action="{{ url_for('admin.reject_user', user_id=u.id) }}" style="display:inline;">
+    <button class="btn btn-sm btn-warning">Reject</button>
+  </form>
+  <form method="post" action="{{ url_for('admin.remove_user', user_id=u.id) }}" style="display:inline;"
+        onsubmit="return confirm('Are you sure you want to completely remove this user?');">
+    <button class="btn btn-sm btn-danger">Remove</button>
+  </form>
+</td>
+
+  </tr>
+  {% else %}
+  <tr>
+    <td colspan="7">No users found.</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<h3>Jobs</h3>
+<ul>
+  <li>Total Jobs: {{ stats.total_jobs }}</li>
+  <li>Open Jobs: {{ stats.open_jobs }}</li>
+  <li>Closed Jobs: {{ stats.closed_jobs }}</li>
+</ul>
+
+<h3>Projects</h3>
+<ul>
+  <li>Total Projects: {{ stats.total_projects }}</li>
+  <li>Completed Projects: {{ stats.completed_projects }}</li>
+  <li>Verified Projects: {{ stats.verified_projects }}</li>
+</ul>
+
+<h3>Ratings</h3>
+<p>
+  Average Student Rating: 
+  {% if stats.avg_student_rating %}
+    ⭐ {{ "%.1f"|format(stats.avg_student_rating) }}/5
+  {% else %}
+    No ratings yet.
+  {% endif %}
+</p>
+
+<hr>
+
+<h3>📋 All Projects</h3>
+<table border="1" cellpadding="6" cellspacing="0">
+  <tr>
+    <th>ID</th>
+    <th>Job</th>
+    <th>Student</th>
+    <th>Client</th>
+    <th>Status</th>
+    <th>Verified</th>
+    <th>Created</th>
+  </tr>
+  {% for p in projects %}
+  <tr>
+    <td>{{ p.id }}</td>
+    <td>{{ p.job.title }}</td>
+    <td>{{ p.student.username }}</td>
+    <td>{{ p.client.username }}</td>
+    <td>{{ p.status }}</td>
+    <td>{{ '✅' if p.verified else '❌' }}</td>
+    <td>{{ p.created_at.strftime('%Y-%m-%d') }}</td>
+  </tr>
+  {% else %}
+  <tr>
+    <td colspan="7">No projects found.</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<a href="{{ url_for('admin.admin_dashboard') }}">⬅ Back to Admin Dashboard</a>
+{% endblock %}
